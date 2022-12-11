@@ -1,0 +1,22 @@
+.restaurantButton {
+    background-color: #968ae1;
+    padding: 10px 5px;
+    width: 80%;
+    margin: 10px auto;
+    color: snow;
+    text-align: center;
+}
+
+.restaurantButtonSelected {
+    background-color: #968ae1;
+    padding: 10px 5px;
+    width: 80%;
+    margin: 10px auto;
+    color: snow;
+    text-align: center;
+    border: solid 2px red
+}
+
+.restaurantButton:hover {
+    cursor: pointer;
+}

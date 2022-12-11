@@ -1,35 +1,38 @@
-import React, {useState, useEffect, useMemo}  from "react";
+import React, {useState, useEffect, useMemo} from "react";
 import {MapContainer, Marker, Polyline, Popup, TileLayer} from "react-leaflet";
-import {getDistanceOfTwoPoints, getTime} from "../../utilis/compute";
+import {getDistanceOfTwoPoints} from "../../utilis/compute";
 
-export const Map = () => {
+export const Map = ({setData, users}) => {
 
   const mapPosition = [48.86537, 2.3433091];
   const [alexPosition, setAlexPosition] = useState([48.869078524477544, 2.3072276777220373])
-  const [restaurantPosition, setRestaurantPosition] = useState( [48.86770662760766, 2.36604343692798])
-  const [polyline, setPolyline] = useState([alexPosition, restaurantPosition])
+  const [restaurantPosition, setRestaurantPosition] = useState([48.86770662760766, 2.36604343692798])
+  const [rdvPosition, setRdvPosition] = useState([48.886937121545245, 2.3432690929871196]);
 
-  useEffect(() => {
+  //const [polyline, setPolyline] = useState([alexPosition, restaurantPosition, rdvPosition]);
 
-    const distance = getDistanceOfTwoPoints(alexPosition[0], alexPosition[1], restaurantPosition[0], restaurantPosition[1]);
-
-    console.log("distance : " + distance);
-    //console.log(getTime(distance,5));
-  }, [alexPosition]);
 
   const eventHandlers = useMemo(() => ({
     dragend(e) {
       const newPosition = e.target.getLatLng()
       setAlexPosition([newPosition.lat, newPosition.lng])
     },
-  }), [])
-
+  }), []);
 
   useEffect(() => {
-    setPolyline([alexPosition, restaurantPosition])
+    const distance =
+      getDistanceOfTwoPoints(alexPosition[0], alexPosition[1], restaurantPosition[0], restaurantPosition[1]);
+
+    setData({
+      distance: distance
+    })
+  }, [alexPosition]);
+
+  useEffect(() => {
+    //setPolyline([alexPosition, restaurantPosition, rdvPosition])
   }, [alexPosition, restaurantPosition])
 
-  return(
+  return (
     <MapContainer
       center={mapPosition}
       zoom={13}
@@ -46,7 +49,7 @@ export const Map = () => {
         position={alexPosition}
       >
         <Popup>
-          Alex
+          Thomas
         </Popup>
       </Marker>
 
@@ -55,7 +58,34 @@ export const Map = () => {
           Restaurant
         </Popup>
       </Marker>
-      <Polyline pathOptions={{color: "red"}} positions={polyline} />
+
+      <Marker position={rdvPosition}>
+        <Popup>
+          RDV POINT
+        </Popup>
+      </Marker>
+
+      {
+        users.map((user) => {
+          return (
+            <>
+              <Marker position={user.addressRestaurant}>
+                <Popup>
+                  {user.restaurant}
+                </Popup>
+              </Marker>
+
+              <Marker position={user.address}>
+                <Popup>
+                  {user.name}
+                </Popup>
+                <Polyline pathOptions={{color: user.color}} positions={user.path}/>
+              </Marker>
+            </>
+          )
+        })
+      }
+
     </MapContainer>
   )
 }

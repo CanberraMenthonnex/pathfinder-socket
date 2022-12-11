@@ -4,6 +4,7 @@
     border: 1px solid black;
 }
 
-.restaurantMenu div {
-    margin: 20px;
+.h2Restaurant {
+    text-align: center;
+    text-decoration: underline;
 }

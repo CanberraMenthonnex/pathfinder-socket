@@ -1,3 +1,5 @@
+import {travelSpeed} from "../const";
+
 export const getDistanceOfTwoPoints = (lat1, lon1, lat2, lon2) => {
   const R = 6371;
   const dLat = (lat2-lat1) * Math.PI / 180;
@@ -7,7 +9,7 @@ export const getDistanceOfTwoPoints = (lat1, lon1, lat2, lon2) => {
     Math.sin(dLon/2) * Math.sin(dLon/2);
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
   const d = R * c;
-  return Math.round(d*1000)+"m";
+  return Math.round(d*1000);
 
 }
 
@@ -15,23 +17,19 @@ export const getTime = (distance, speed) => {
   return distance / speed
 }
 
-export const hoursToMinute = (hours) => {
-  return hours * 60
+
+export const toHoursAndMinutes = (totalMinutes, round = false) => {
+  const minutes = totalMinutes % 60;
+  const hours = Math.floor(totalMinutes / 60);
+
+  if(round){
+    return `${padTo2Digits(hours)}:${Math.round(minutes)}`;
+  }
+  return `${padTo2Digits(hours)}:${padTo2Digits(minutes)}`;
 }
 
-export const MinuteToHours = (min) => {
-  return 60 / min
-}
-
-export const calculateTimeToLeave = (rdvTime, distance) => {
-  const timeToLeave = ""
-
-  const timeInMinute = hoursToMinute(rdvTime)
-
-  const timeToMake = getTime(distance, 5)
-
-
-  return timeToLeave;
+const padTo2Digits = (num) => {
+  return num.toString().padStart(2, '0');
 }
 
 export const haversine = () => {
@@ -44,8 +42,8 @@ export const haversine = () => {
   const lat1 = 42.806911;
   const lon1 = -71.290611;
 
-  const R = 6371; // km
-//has a problem with the .toRad() method below.
+  const R = 6371;
+
   const x1 = lat2-lat1;
   const dLat = x1.toRad();
   const x2 = lon2-lon1;
@@ -57,4 +55,25 @@ export const haversine = () => {
   const d = R * c;
 
   return d;
+}
+
+
+export const timeConvert = (n) =>  {
+  const num = n;
+  const hours = (num / 60);
+  const rhours = Math.floor(hours);
+  const minutes = (hours - rhours) * 60;
+  const rminutes = Math.round(minutes);
+  return rhours + " hour(s) and " + rminutes + " minute(s).";
+}
+
+
+export const calculateTimeFrom = (x, y, i, j) => {
+
+  const distance = getDistanceOfTwoPoints(x, y, i, j);
+  const timeInHour =  (getTime(distance / 1000, travelSpeed))
+  const timeTravel = timeConvert(timeInHour * 60)
+
+
+  return timeTravel;
 }
